@@ -11,8 +11,12 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      builder: (_) => AppDatabase(),
+    final db = AppDatabase();
+    return MultiProvider(
+      providers: [
+        Provider(builder: (_) => db.foodDao),
+        Provider(builder: (_) => db.tagDao),
+      ],
       child: MaterialApp(
         title: 'Foodie tinder',
         home: Scaffold(

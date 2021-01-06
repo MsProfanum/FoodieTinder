@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moor/moor.dart';
 import 'package:provider/provider.dart';
 
 import 'data/moor_database.dart';
@@ -13,7 +14,7 @@ class NewFoodInput extends StatefulWidget {
 }
 
 class _NewFoodInputState extends State<NewFoodInput> {
-  DateTime newTaskDate;
+  Tag selectedTag;
   TextEditingController controller;
 
   @override
@@ -28,7 +29,10 @@ class _NewFoodInputState extends State<NewFoodInput> {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        children: <Widget>[_buildTextField(context)],
+        children: <Widget>[
+          _buildTextField(context),
+          _buildTagSelector(context),
+        ],
       ),
     );
   }
@@ -39,18 +43,62 @@ class _NewFoodInputState extends State<NewFoodInput> {
         controller: controller,
         decoration: InputDecoration(hintText: 'Food Name'),
         onSubmitted: (inputName) {
-          final database = Provider.of<AppDatabase>(context);
-          final food = Food(name: inputName);
-          database.insertFood(food);
+          final dao = Provider.of<FoodDao>(context);
+          final food = FoodsCompanion(
+            name: Value(inputName),
+            tagName: Value(selectedTag?.name),
+          );
+          dao.insertFood(food);
           resetValuesAfterSubmit();
         },
       ),
     );
   }
 
+  StreamBuilder<List<Tag>> _buildTagSelector(BuildContext context) {
+    return StreamBuilder<List<Tag>>(
+      stream: Provider.of<TagDao>(context).watchTags(),
+      builder: (context, snapshot) {
+        final tags = snapshot.data ?? List();
+
+        DropdownMenuItem<Tag> dropdownFromTag(Tag tag) {
+          return DropdownMenuItem(
+            value: tag,
+            child: Row(
+              children: <Widget>[Text(tag.name)],
+            ),
+          );
+        }
+
+        final dropdownMenuItems =
+            tags.map((tag) => dropdownFromTag(tag)).toList()
+              ..insert(
+                0,
+                DropdownMenuItem(
+                  value: null,
+                  child: Text('No Tag'),
+                ),
+              );
+
+        return Expanded(
+          child: DropdownButton(
+            onChanged: (Tag tag) {
+              setState(() {
+                selectedTag = tag;
+              });
+            },
+            isExpanded: true,
+            value: selectedTag,
+            items: dropdownMenuItems,
+          ),
+        );
+      },
+    );
+  }
+
   void resetValuesAfterSubmit() {
     setState(() {
-      newTaskDate = null;
+      selectedTag = null;
       controller.clear();
     });
   }
