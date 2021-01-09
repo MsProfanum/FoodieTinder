@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:foodietinder/food_input.dart';
-import 'package:foodietinder/tag_input.dart';
 import 'package:provider/provider.dart';
 
 import 'data/moor_database.dart';
+import 'data/tag_card.dart';
 
 class GamePage extends StatefulWidget {
+  List<FoodWithTags> foodWithTags;
+  List<Tag> tags;
+
+  GamePage({Key key, @required this.foodWithTags, @required this.tags})
+      : super(key: key);
+
   @override
   _GamePageState createState() => _GamePageState();
 }
@@ -19,57 +24,12 @@ class _GamePageState extends State<GamePage> {
         child: Column(
           children: [
             Expanded(
-              child: _buildFoodList(context),
+              child:
+                  TagCard(foodWithTags: widget.foodWithTags, tags: widget.tags),
             ),
-            NewFoodInput(),
-            NewTagInput(),
           ],
         ),
       ),
     );
   }
-}
-
-StreamBuilder<List<FoodWithTag>> _buildFoodList(BuildContext context) {
-  final dao = Provider.of<FoodDao>(context);
-
-  return StreamBuilder(
-    stream: dao.watchAllFoods(),
-    builder: (context, AsyncSnapshot<List<FoodWithTag>> snapshot) {
-      final foods = snapshot.data ?? List();
-
-      return ListView.builder(
-        itemCount: foods.length,
-        itemBuilder: (_, index) {
-          final itemFood = foods[index];
-          return _buildListItem(itemFood, dao);
-        },
-      );
-    },
-  );
-}
-
-Widget _buildListItem(FoodWithTag itemFood, FoodDao dao) {
-  return Slidable(
-    actionPane: SlidableDrawerActionPane(),
-    secondaryActions: <Widget>[
-      IconSlideAction(
-        caption: 'Delete',
-        color: Colors.red,
-        icon: Icons.delete,
-        onTap: () => dao.deleteFood(itemFood.food),
-      )
-    ],
-    child: ListTile(
-      title: Text(itemFood.food.name),
-      subtitle: _buildTag(itemFood.tag),
-    ),
-  );
-}
-
-Text _buildTag(Tag tag) {
-  return Text(
-    tag.name,
-    style: TextStyle(color: Colors.black.withOpacity(0.5)),
-  );
 }

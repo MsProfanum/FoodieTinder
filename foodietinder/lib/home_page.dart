@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodietinder/data/moor_database.dart';
+import 'package:provider/provider.dart';
 
 import 'game_page.dart';
 
@@ -10,31 +12,61 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-            shape: CircleBorder(), primary: Colors.green),
-        child: Container(
-          width: 200,
-          height: 200,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(shape: BoxShape.circle),
-          child: Text(
-            'START',
-            style: TextStyle(fontSize: 40),
-          ),
-        ),
-        onPressed: () {
-          Navigator.of(context).push(_createRoute());
-        },
-      ),
+    final database = Provider.of<AppDatabase>(context);
+
+    return StreamBuilder(
+      stream: database.watchAllFoods(),
+      builder: (context, snap) {
+        if (snap.hasData) {
+          return StreamBuilder(
+            stream: database.watchAllTags(),
+            builder: (context, shot) {
+              if (shot.hasData) {
+                return Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(), primary: Colors.green),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(shape: BoxShape.circle),
+                      child: Text(
+                        'START',
+                        style: TextStyle(fontSize: 40),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(_createRoute(snap.data, shot.data));
+                    },
+                  ),
+                );
+              } else {
+                return SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 60,
+                  height: 60,
+                );
+              }
+            },
+          );
+        } else {
+          return SizedBox(
+            child: CircularProgressIndicator(),
+            width: 60,
+            height: 60,
+          );
+        }
+      },
     );
   }
 }
 
-Route _createRoute() {
+Route _createRoute(List<FoodWithTags> foods, List<Tag> tags) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => GamePage(),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        GamePage(foodWithTags: foods, tags: tags),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       var begin = Offset(0.0, 1.0);
       var end = Offset.zero;

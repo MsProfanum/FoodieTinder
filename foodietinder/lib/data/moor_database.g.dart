@@ -10,8 +10,7 @@ part of 'moor_database.dart';
 class Food extends DataClass implements Insertable<Food> {
   final int id;
   final String name;
-  final String tagName;
-  Food({@required this.id, @required this.name, this.tagName});
+  Food({@required this.id, @required this.name});
   factory Food.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -20,8 +19,6 @@ class Food extends DataClass implements Insertable<Food> {
     return Food(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      tagName: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}tag_name']),
     );
   }
   @override
@@ -33,9 +30,6 @@ class Food extends DataClass implements Insertable<Food> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
-    if (!nullToAbsent || tagName != null) {
-      map['tag_name'] = Variable<String>(tagName);
-    }
     return map;
   }
 
@@ -43,9 +37,6 @@ class Food extends DataClass implements Insertable<Food> {
     return FoodsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      tagName: tagName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(tagName),
     );
   }
 
@@ -55,7 +46,6 @@ class Food extends DataClass implements Insertable<Food> {
     return Food(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      tagName: serializer.fromJson<String>(json['tagName']),
     );
   }
   @override
@@ -64,69 +54,55 @@ class Food extends DataClass implements Insertable<Food> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'tagName': serializer.toJson<String>(tagName),
     };
   }
 
-  Food copyWith({int id, String name, String tagName}) => Food(
+  Food copyWith({int id, String name}) => Food(
         id: id ?? this.id,
         name: name ?? this.name,
-        tagName: tagName ?? this.tagName,
       );
   @override
   String toString() {
     return (StringBuffer('Food(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('tagName: $tagName')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, tagName.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Food &&
-          other.id == this.id &&
-          other.name == this.name &&
-          other.tagName == this.tagName);
+      (other is Food && other.id == this.id && other.name == this.name);
 }
 
 class FoodsCompanion extends UpdateCompanion<Food> {
   final Value<int> id;
   final Value<String> name;
-  final Value<String> tagName;
   const FoodsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.tagName = const Value.absent(),
   });
   FoodsCompanion.insert({
     this.id = const Value.absent(),
     @required String name,
-    this.tagName = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Food> custom({
     Expression<int> id,
     Expression<String> name,
-    Expression<String> tagName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (tagName != null) 'tag_name': tagName,
     });
   }
 
-  FoodsCompanion copyWith(
-      {Value<int> id, Value<String> name, Value<String> tagName}) {
+  FoodsCompanion copyWith({Value<int> id, Value<String> name}) {
     return FoodsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      tagName: tagName ?? this.tagName,
     );
   }
 
@@ -139,9 +115,6 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (tagName.present) {
-      map['tag_name'] = Variable<String>(tagName.value);
-    }
     return map;
   }
 
@@ -149,8 +122,7 @@ class FoodsCompanion extends UpdateCompanion<Food> {
   String toString() {
     return (StringBuffer('FoodsCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('tagName: $tagName')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
@@ -178,17 +150,8 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
         minTextLength: 1, maxTextLength: 50);
   }
 
-  final VerificationMeta _tagNameMeta = const VerificationMeta('tagName');
-  GeneratedTextColumn _tagName;
   @override
-  GeneratedTextColumn get tagName => _tagName ??= _constructTagName();
-  GeneratedTextColumn _constructTagName() {
-    return GeneratedTextColumn('tag_name', $tableName, true,
-        $customConstraints: 'NULL REFERENCES tags(name)');
-  }
-
-  @override
-  List<GeneratedColumn> get $columns => [id, name, tagName];
+  List<GeneratedColumn> get $columns => [id, name];
   @override
   $FoodsTable get asDslTable => this;
   @override
@@ -209,10 +172,6 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('tag_name')) {
-      context.handle(_tagNameMeta,
-          tagName.isAcceptableOrUnknown(data['tag_name'], _tagNameMeta));
-    }
     return context;
   }
 
@@ -231,19 +190,25 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
 }
 
 class Tag extends DataClass implements Insertable<Tag> {
+  final int id;
   final String name;
-  Tag({@required this.name});
+  Tag({@required this.id, @required this.name});
   factory Tag.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return Tag(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
@@ -252,6 +217,7 @@ class Tag extends DataClass implements Insertable<Tag> {
 
   TagsCompanion toCompanion(bool nullToAbsent) {
     return TagsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
     );
   }
@@ -260,6 +226,7 @@ class Tag extends DataClass implements Insertable<Tag> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Tag(
+      id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
     );
   }
@@ -267,43 +234,56 @@ class Tag extends DataClass implements Insertable<Tag> {
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
     };
   }
 
-  Tag copyWith({String name}) => Tag(
+  Tag copyWith({int id, String name}) => Tag(
+        id: id ?? this.id,
         name: name ?? this.name,
       );
   @override
   String toString() {
-    return (StringBuffer('Tag(')..write('name: $name')..write(')')).toString();
+    return (StringBuffer('Tag(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
   }
 
   @override
-  int get hashCode => $mrjf(name.hashCode);
+  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
   @override
   bool operator ==(dynamic other) =>
-      identical(this, other) || (other is Tag && other.name == this.name);
+      identical(this, other) ||
+      (other is Tag && other.id == this.id && other.name == this.name);
 }
 
 class TagsCompanion extends UpdateCompanion<Tag> {
+  final Value<int> id;
   final Value<String> name;
   const TagsCompanion({
+    this.id = const Value.absent(),
     this.name = const Value.absent(),
   });
   TagsCompanion.insert({
+    this.id = const Value.absent(),
     @required String name,
   }) : name = Value(name);
   static Insertable<Tag> custom({
+    Expression<int> id,
     Expression<String> name,
   }) {
     return RawValuesInsertable({
+      if (id != null) 'id': id,
       if (name != null) 'name': name,
     });
   }
 
-  TagsCompanion copyWith({Value<String> name}) {
+  TagsCompanion copyWith({Value<int> id, Value<String> name}) {
     return TagsCompanion(
+      id: id ?? this.id,
       name: name ?? this.name,
     );
   }
@@ -311,6 +291,9 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
@@ -319,7 +302,10 @@ class TagsCompanion extends UpdateCompanion<Tag> {
 
   @override
   String toString() {
-    return (StringBuffer('TagsCompanion(')..write('name: $name')..write(')'))
+    return (StringBuffer('TagsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
         .toString();
   }
 }
@@ -328,6 +314,15 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   final GeneratedDatabase _db;
   final String _alias;
   $TagsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
   final VerificationMeta _nameMeta = const VerificationMeta('name');
   GeneratedTextColumn _name;
   @override
@@ -338,7 +333,7 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [name];
+  List<GeneratedColumn> get $columns => [id, name];
   @override
   $TagsTable get asDslTable => this;
   @override
@@ -350,6 +345,9 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
     if (data.containsKey('name')) {
       context.handle(
           _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
@@ -360,7 +358,7 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {name};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Tag map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -373,30 +371,214 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
   }
 }
 
+class FoodEntry extends DataClass implements Insertable<FoodEntry> {
+  final int foodId;
+  final int tagId;
+  FoodEntry({@required this.foodId, @required this.tagId});
+  factory FoodEntry.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return FoodEntry(
+      foodId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}food_id']),
+      tagId: intType.mapFromDatabaseResponse(data['${effectivePrefix}tag_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || foodId != null) {
+      map['food_id'] = Variable<int>(foodId);
+    }
+    if (!nullToAbsent || tagId != null) {
+      map['tag_id'] = Variable<int>(tagId);
+    }
+    return map;
+  }
+
+  FoodEntriesCompanion toCompanion(bool nullToAbsent) {
+    return FoodEntriesCompanion(
+      foodId:
+          foodId == null && nullToAbsent ? const Value.absent() : Value(foodId),
+      tagId:
+          tagId == null && nullToAbsent ? const Value.absent() : Value(tagId),
+    );
+  }
+
+  factory FoodEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return FoodEntry(
+      foodId: serializer.fromJson<int>(json['foodId']),
+      tagId: serializer.fromJson<int>(json['tagId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'foodId': serializer.toJson<int>(foodId),
+      'tagId': serializer.toJson<int>(tagId),
+    };
+  }
+
+  FoodEntry copyWith({int foodId, int tagId}) => FoodEntry(
+        foodId: foodId ?? this.foodId,
+        tagId: tagId ?? this.tagId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('FoodEntry(')
+          ..write('foodId: $foodId, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(foodId.hashCode, tagId.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is FoodEntry &&
+          other.foodId == this.foodId &&
+          other.tagId == this.tagId);
+}
+
+class FoodEntriesCompanion extends UpdateCompanion<FoodEntry> {
+  final Value<int> foodId;
+  final Value<int> tagId;
+  const FoodEntriesCompanion({
+    this.foodId = const Value.absent(),
+    this.tagId = const Value.absent(),
+  });
+  FoodEntriesCompanion.insert({
+    @required int foodId,
+    @required int tagId,
+  })  : foodId = Value(foodId),
+        tagId = Value(tagId);
+  static Insertable<FoodEntry> custom({
+    Expression<int> foodId,
+    Expression<int> tagId,
+  }) {
+    return RawValuesInsertable({
+      if (foodId != null) 'food_id': foodId,
+      if (tagId != null) 'tag_id': tagId,
+    });
+  }
+
+  FoodEntriesCompanion copyWith({Value<int> foodId, Value<int> tagId}) {
+    return FoodEntriesCompanion(
+      foodId: foodId ?? this.foodId,
+      tagId: tagId ?? this.tagId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (foodId.present) {
+      map['food_id'] = Variable<int>(foodId.value);
+    }
+    if (tagId.present) {
+      map['tag_id'] = Variable<int>(tagId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FoodEntriesCompanion(')
+          ..write('foodId: $foodId, ')
+          ..write('tagId: $tagId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FoodEntriesTable extends FoodEntries
+    with TableInfo<$FoodEntriesTable, FoodEntry> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $FoodEntriesTable(this._db, [this._alias]);
+  final VerificationMeta _foodIdMeta = const VerificationMeta('foodId');
+  GeneratedIntColumn _foodId;
+  @override
+  GeneratedIntColumn get foodId => _foodId ??= _constructFoodId();
+  GeneratedIntColumn _constructFoodId() {
+    return GeneratedIntColumn(
+      'food_id',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _tagIdMeta = const VerificationMeta('tagId');
+  GeneratedIntColumn _tagId;
+  @override
+  GeneratedIntColumn get tagId => _tagId ??= _constructTagId();
+  GeneratedIntColumn _constructTagId() {
+    return GeneratedIntColumn(
+      'tag_id',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [foodId, tagId];
+  @override
+  $FoodEntriesTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'food_entries';
+  @override
+  final String actualTableName = 'food_entries';
+  @override
+  VerificationContext validateIntegrity(Insertable<FoodEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('food_id')) {
+      context.handle(_foodIdMeta,
+          foodId.isAcceptableOrUnknown(data['food_id'], _foodIdMeta));
+    } else if (isInserting) {
+      context.missing(_foodIdMeta);
+    }
+    if (data.containsKey('tag_id')) {
+      context.handle(
+          _tagIdMeta, tagId.isAcceptableOrUnknown(data['tag_id'], _tagIdMeta));
+    } else if (isInserting) {
+      context.missing(_tagIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  @override
+  FoodEntry map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return FoodEntry.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $FoodEntriesTable createAlias(String alias) {
+    return $FoodEntriesTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $FoodsTable _foods;
   $FoodsTable get foods => _foods ??= $FoodsTable(this);
   $TagsTable _tags;
   $TagsTable get tags => _tags ??= $TagsTable(this);
-  FoodDao _foodDao;
-  FoodDao get foodDao => _foodDao ??= FoodDao(this as AppDatabase);
-  TagDao _tagDao;
-  TagDao get tagDao => _tagDao ??= TagDao(this as AppDatabase);
+  $FoodEntriesTable _foodEntries;
+  $FoodEntriesTable get foodEntries => _foodEntries ??= $FoodEntriesTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [foods, tags];
-}
-
-// **************************************************************************
-// DaoGenerator
-// **************************************************************************
-
-mixin _$FoodDaoMixin on DatabaseAccessor<AppDatabase> {
-  $FoodsTable get foods => attachedDatabase.foods;
-  $TagsTable get tags => attachedDatabase.tags;
-}
-mixin _$TagDaoMixin on DatabaseAccessor<AppDatabase> {
-  $TagsTable get tags => attachedDatabase.tags;
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [foods, tags, foodEntries];
 }
