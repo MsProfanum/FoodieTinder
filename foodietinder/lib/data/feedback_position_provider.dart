@@ -21,9 +21,9 @@ class FeedbackPositionProvider extends ChangeNotifier {
   void updatePosition(double changeInX) {
     _dx = _dx + changeInX;
 
-    if (_dx > 0) {
+    if (_dx > 30) {
       _swipingDirection = SwipingDirection.right;
-    } else if (_dx < 0) {
+    } else if (_dx < -30) {
       _swipingDirection = SwipingDirection.left;
     } else {
       _swipingDirection = SwipingDirection.none;

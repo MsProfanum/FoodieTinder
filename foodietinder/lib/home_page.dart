@@ -27,13 +27,13 @@ class _HomePageState extends State<HomePage> {
                     style: ElevatedButton.styleFrom(
                         shape: CircleBorder(), primary: Colors.green),
                     child: Container(
-                      width: 200,
-                      height: 200,
+                      width: 250,
+                      height: 250,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(shape: BoxShape.circle),
                       child: Text(
                         'START',
-                        style: TextStyle(fontSize: 40),
+                        style: TextStyle(fontSize: 50),
                       ),
                     ),
                     onPressed: () {

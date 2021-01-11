@@ -17,8 +17,8 @@ class CardWidget extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      height: size.height * 0.7,
-      width: size.width * 0.95,
+      height: size.height * 0.5,
+      width: size.width * 0.9,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
@@ -40,13 +40,16 @@ class CardWidget extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
+                right: 10,
+                left: 10,
+                bottom: 10,
                 child: Center(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [buildInfo(tag: tag)],
-              ),
-            )),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [buildInfo(tag: tag)],
+                  ),
+                )),
             if (isInFocus) buildLikeBadge(swipingDirection)
           ],
         ),

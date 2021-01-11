@@ -22,70 +22,40 @@ class TagCard extends StatefulWidget {
 }
 
 class _TagCardState extends State<TagCard> {
+  List<TagItem> tagItems = [];
+  Widget card;
+  Random random = new Random();
+
   @override
   Widget build(BuildContext context) {
-    List<Tag> tags = widget.tags;
     return Center(
       child: Container(
         alignment: Alignment.center,
         child: ValueListenableBuilder(
             valueListenable: tagIndex,
             builder: (context, value, w) {
-              List<TagItem> tagItems = [];
-
-              widget.tags.forEach((tag) {
-                tagItems.add(new TagItem(id: tag.id, name: tag.name));
-              });
-              return (widget.foodWithTags.length == 1 ||
-                      widget.tags.length == 1)
+              tagItems = _createTagItemList();
+              card = buildCard(tagItems[random.nextInt(tagItems.length)]);
+              return (widget.foodWithTags.length <= 1 ||
+                      widget.tags.length <= 1)
                   ? Text(
                       widget.foodWithTags[0].food.name,
                       style: TextStyle(fontSize: 60),
                     )
-                  // : Column(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     children: [
-                  //       Text(
-                  //         tags[tagIndex.value].name,
-                  //         style: TextStyle(fontSize: 34),
-                  //       ),
-                  //       Row(
-                  //         mainAxisAlignment: MainAxisAlignment.center,
-                  //         children: [
-                  //           FlatButton(
-                  //               onPressed: () {
-                  //                 _removeFoodWithoutTag(tags[tagIndex.value]);
-                  //                 _updateTags(tags[tagIndex.value], tags);
-                  //                 printFoods();
-
-                  //                 tagIndex.value = random.nextInt(tags.length);
-                  //               },
-                  //               child: Text('Yes')),
-                  //           FlatButton(
-                  //               onPressed: () {
-                  //                 _removeFoodWithTag(tags[tagIndex.value]);
-                  //                 _updateTags(tags[tagIndex.value], tags);
-                  //                 printFoods();
-
-                  //                 tagIndex.value = random.nextInt(tags.length);
-                  //               },
-                  //               child: Text('No')),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   );
-                  : Stack(
-                      children: tagItems.map(buildTag).toList(),
-                    );
+                  : card;
             }),
       ),
     );
   }
 
-  Widget buildTag(TagItem tag) {
-    Tag t = new Tag(id: tag.id, name: tag.name);
-    final tagIdx = widget.tags.indexOf(t);
-    final isInFocus = tagIdx == widget.tags.length - 1;
+  Widget buildCard(TagItem tag) {
+    Tag t;
+    widget.tags.forEach((element) {
+      if (element.name == tag.name) {
+        t = element;
+      }
+    });
+    final isInFocus = true;
 
     return Listener(
       onPointerMove: (pointerEvent) {
@@ -103,12 +73,12 @@ class _TagCardState extends State<TagCard> {
             Provider.of<FeedbackPositionProvider>(context, listen: false);
         provider.resetPosition();
       },
-      child: Draggable(
+      child: Draggable<CardWidget>(
         child: CardWidget(tag: tag, isInFocus: isInFocus),
+        childWhenDragging: Container(),
         feedback: Material(
             type: MaterialType.transparency,
             child: CardWidget(tag: tag, isInFocus: isInFocus)),
-        childWhenDragging: Container(),
         onDragEnd: (details) => onDragEnd(details, tag, t),
       ),
     );
@@ -117,12 +87,27 @@ class _TagCardState extends State<TagCard> {
   void onDragEnd(DraggableDetails details, TagItem tagItem, Tag t) {
     final minimumDrag = 100;
     if (details.offset.dx > minimumDrag) {
-      tagItem.isSwipedOff = true;
-    } else if (details.offset.dx < -minimumDrag) {
+      print("LIKE");
       tagItem.isLiked = true;
-    }
+      _removeFoodWithoutTag(t);
+      _updateTags(t, widget.tags);
 
-    setState(() => _updateTags(t, widget.tags));
+      _updateTags(t, widget.tags);
+    } else if (details.offset.dx < -minimumDrag) {
+      print("NOPE");
+      tagItem.isSwipedOff = true;
+      _removeFoodWithTag(t);
+      _updateTags(t, widget.tags);
+    }
+  }
+
+  List<TagItem> _createTagItemList() {
+    List<TagItem> tagList = [];
+    widget.tags.forEach((tag) {
+      tagList.add(new TagItem(id: tag.id, name: tag.name));
+    });
+
+    return tagList;
   }
 
   void _removeFoodWithTag(Tag tag) {
@@ -137,26 +122,30 @@ class _TagCardState extends State<TagCard> {
     });
   }
 
-  void printFoods() {
-    widget.foodWithTags.forEach((element) {
-      print(element.food.name);
-    });
-
-    print('Length: ${widget.foodWithTags.length}');
-  }
-
   void _updateTags(Tag tag, List<Tag> tags) {
     List<Tag> newTagsList = [];
+    List<TagItem> newTagItemList = [];
     widget.foodWithTags.forEach((element) {
       element.tags.forEach((t) {
         if (!newTagsList.contains(t) && tags.contains(t)) {
           newTagsList.add(t);
+          newTagItemList.add(new TagItem(id: t.id, name: t.name));
         }
       });
     });
     newTagsList.remove(tag);
-
+    newTagItemList.removeWhere((element) => element.id == tag.id);
     tags.clear();
     tags.addAll(newTagsList);
+
+    tagItems.clear();
+    tagItems.addAll(newTagItemList);
+
+    tagItems.forEach((element) {
+      print(element.name);
+    });
+    setState(() {
+      card = buildCard(tagItems[random.nextInt(tagItems.length)]);
+    });
   }
 }
