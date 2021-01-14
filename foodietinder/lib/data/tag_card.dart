@@ -76,7 +76,6 @@ class _TagCardState extends State<TagCard> {
       tagItems = _createTagItemList();
       card = buildCard(tagItems[
           (tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
-      print(tagsCopy.length);
     });
   }
 
@@ -170,12 +169,6 @@ class _TagCardState extends State<TagCard> {
 
     tagItems.clear();
     tagItems.addAll(newTagItemList);
-
-    //TODO Delete print commands
-    tagItems.forEach((element) {
-      print(element.name);
-    });
-    print("XXXXXX");
 
     setState(() {
       card = buildCard(tagItems[
