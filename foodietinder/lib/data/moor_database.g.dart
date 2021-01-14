@@ -192,7 +192,8 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
 class Tag extends DataClass implements Insertable<Tag> {
   final int id;
   final String name;
-  Tag({@required this.id, @required this.name});
+  final String imagePath;
+  Tag({@required this.id, @required this.name, @required this.imagePath});
   factory Tag.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -201,6 +202,8 @@ class Tag extends DataClass implements Insertable<Tag> {
     return Tag(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      imagePath: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}image_path']),
     );
   }
   @override
@@ -212,6 +215,9 @@ class Tag extends DataClass implements Insertable<Tag> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
+    if (!nullToAbsent || imagePath != null) {
+      map['image_path'] = Variable<String>(imagePath);
+    }
     return map;
   }
 
@@ -219,6 +225,9 @@ class Tag extends DataClass implements Insertable<Tag> {
     return TagsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      imagePath: imagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imagePath),
     );
   }
 
@@ -228,6 +237,7 @@ class Tag extends DataClass implements Insertable<Tag> {
     return Tag(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      imagePath: serializer.fromJson<String>(json['imagePath']),
     );
   }
   @override
@@ -236,55 +246,70 @@ class Tag extends DataClass implements Insertable<Tag> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'imagePath': serializer.toJson<String>(imagePath),
     };
   }
 
-  Tag copyWith({int id, String name}) => Tag(
+  Tag copyWith({int id, String name, String imagePath}) => Tag(
         id: id ?? this.id,
         name: name ?? this.name,
+        imagePath: imagePath ?? this.imagePath,
       );
   @override
   String toString() {
     return (StringBuffer('Tag(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('imagePath: $imagePath')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, imagePath.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Tag && other.id == this.id && other.name == this.name);
+      (other is Tag &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.imagePath == this.imagePath);
 }
 
 class TagsCompanion extends UpdateCompanion<Tag> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String> imagePath;
   const TagsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.imagePath = const Value.absent(),
   });
   TagsCompanion.insert({
     this.id = const Value.absent(),
     @required String name,
-  }) : name = Value(name);
+    @required String imagePath,
+  })  : name = Value(name),
+        imagePath = Value(imagePath);
   static Insertable<Tag> custom({
     Expression<int> id,
     Expression<String> name,
+    Expression<String> imagePath,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (imagePath != null) 'image_path': imagePath,
     });
   }
 
-  TagsCompanion copyWith({Value<int> id, Value<String> name}) {
+  TagsCompanion copyWith(
+      {Value<int> id, Value<String> name, Value<String> imagePath}) {
     return TagsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 
@@ -297,6 +322,9 @@ class TagsCompanion extends UpdateCompanion<Tag> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (imagePath.present) {
+      map['image_path'] = Variable<String>(imagePath.value);
+    }
     return map;
   }
 
@@ -304,7 +332,8 @@ class TagsCompanion extends UpdateCompanion<Tag> {
   String toString() {
     return (StringBuffer('TagsCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('imagePath: $imagePath')
           ..write(')'))
         .toString();
   }
@@ -332,8 +361,20 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
         minTextLength: 1, maxTextLength: 20);
   }
 
+  final VerificationMeta _imagePathMeta = const VerificationMeta('imagePath');
+  GeneratedTextColumn _imagePath;
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  GeneratedTextColumn get imagePath => _imagePath ??= _constructImagePath();
+  GeneratedTextColumn _constructImagePath() {
+    return GeneratedTextColumn(
+      'image_path',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, name, imagePath];
   @override
   $TagsTable get asDslTable => this;
   @override
@@ -353,6 +394,12 @@ class $TagsTable extends Tags with TableInfo<$TagsTable, Tag> {
           _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('image_path')) {
+      context.handle(_imagePathMeta,
+          imagePath.isAcceptableOrUnknown(data['image_path'], _imagePathMeta));
+    } else if (isInserting) {
+      context.missing(_imagePathMeta);
     }
     return context;
   }

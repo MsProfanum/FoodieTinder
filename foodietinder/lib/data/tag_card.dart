@@ -5,10 +5,13 @@ import 'package:foodietinder/data/card_widget.dart';
 import 'package:foodietinder/data/feedback_position_provider.dart';
 import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/data/tag_item.dart';
+
 import 'package:provider/provider.dart';
 
 final tagIndex = ValueNotifier<int>(0);
 var random = new Random();
+List<FoodWithTags> foodWithTagsCopy;
+List<Tag> tagsCopy;
 
 class TagCard extends StatefulWidget {
   List<FoodWithTags> foodWithTags;
@@ -24,7 +27,16 @@ class TagCard extends StatefulWidget {
 class _TagCardState extends State<TagCard> {
   List<TagItem> tagItems = [];
   Widget card;
-  Random random = new Random();
+
+  @override
+  void initState() {
+    super.initState();
+    foodWithTagsCopy = List.of(widget.foodWithTags);
+    tagsCopy = List.of(widget.tags);
+    tagItems = _createTagItemList();
+    card = buildCard(
+        tagItems[(tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +46,22 @@ class _TagCardState extends State<TagCard> {
         child: ValueListenableBuilder(
             valueListenable: tagIndex,
             builder: (context, value, w) {
-              tagItems = _createTagItemList();
-              card = buildCard(tagItems[random.nextInt(tagItems.length)]);
-              return (widget.foodWithTags.length <= 1 ||
-                      widget.tags.length <= 1)
-                  ? Text(
-                      widget.foodWithTags[0].food.name,
-                      style: TextStyle(fontSize: 60),
+              return (foodWithTagsCopy.length <= 1 || tagsCopy.length <= 1)
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          foodWithTagsCopy[0].food.name,
+                          style: TextStyle(fontSize: 60),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                          icon: Icon(Icons.refresh),
+                          iconSize: 64,
+                          onPressed: () => _refresh(),
+                        )
+                      ],
                     )
                   : card;
             }),
@@ -48,9 +69,20 @@ class _TagCardState extends State<TagCard> {
     );
   }
 
+  void _refresh() {
+    setState(() {
+      foodWithTagsCopy = List.of(widget.foodWithTags);
+      tagsCopy = List.of(widget.tags);
+      tagItems = _createTagItemList();
+      card = buildCard(tagItems[
+          (tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
+      print(tagsCopy.length);
+    });
+  }
+
   Widget buildCard(TagItem tag) {
     Tag t;
-    widget.tags.forEach((element) {
+    tagsCopy.forEach((element) {
       if (element.name == tag.name) {
         t = element;
       }
@@ -87,23 +119,21 @@ class _TagCardState extends State<TagCard> {
   void onDragEnd(DraggableDetails details, TagItem tagItem, Tag t) {
     final minimumDrag = 100;
     if (details.offset.dx > minimumDrag) {
-      print("LIKE");
       tagItem.isLiked = true;
       _removeFoodWithoutTag(t);
-      _updateTags(t, widget.tags);
+      _updateTags(t, tagsCopy);
 
-      _updateTags(t, widget.tags);
+      _updateTags(t, tagsCopy);
     } else if (details.offset.dx < -minimumDrag) {
-      print("NOPE");
       tagItem.isSwipedOff = true;
       _removeFoodWithTag(t);
-      _updateTags(t, widget.tags);
+      _updateTags(t, tagsCopy);
     }
   }
 
   List<TagItem> _createTagItemList() {
     List<TagItem> tagList = [];
-    widget.tags.forEach((tag) {
+    tagsCopy.forEach((tag) {
       tagList.add(new TagItem(id: tag.id, name: tag.name));
     });
 
@@ -111,13 +141,13 @@ class _TagCardState extends State<TagCard> {
   }
 
   void _removeFoodWithTag(Tag tag) {
-    widget.foodWithTags.removeWhere((food) {
+    foodWithTagsCopy.removeWhere((food) {
       return food.tags.contains(tag);
     });
   }
 
   void _removeFoodWithoutTag(Tag tag) {
-    widget.foodWithTags.removeWhere((food) {
+    foodWithTagsCopy.removeWhere((food) {
       return !food.tags.contains(tag);
     });
   }
@@ -125,7 +155,7 @@ class _TagCardState extends State<TagCard> {
   void _updateTags(Tag tag, List<Tag> tags) {
     List<Tag> newTagsList = [];
     List<TagItem> newTagItemList = [];
-    widget.foodWithTags.forEach((element) {
+    foodWithTagsCopy.forEach((element) {
       element.tags.forEach((t) {
         if (!newTagsList.contains(t) && tags.contains(t)) {
           newTagsList.add(t);
@@ -141,11 +171,15 @@ class _TagCardState extends State<TagCard> {
     tagItems.clear();
     tagItems.addAll(newTagItemList);
 
+    //TODO Delete print commands
     tagItems.forEach((element) {
       print(element.name);
     });
+    print("XXXXXX");
+
     setState(() {
-      card = buildCard(tagItems[random.nextInt(tagItems.length)]);
+      card = buildCard(tagItems[
+          (tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
     });
   }
 }

@@ -1,0 +1,35 @@
+{
+    "tags": [
+        {"name": "salty", "imagePath": ""},
+        {"name": "sweet", "imagePath": ""},
+        {"name": "savory", "imagePath": ""},
+        {"name": "cheesy", "imagePath": ""},
+        {"name": "snack", "imagePath": ""},
+        {"name": "spicy", "imagePath": ""},
+        {"name": "fast food", "imagePath": ""},
+        {"name": "vegetarian", "imagePath": ""},
+        {"name": "dairy", "imagePath": ""},
+        {"name": "cold", "imagePath": ""},
+        {"name": "with meat", "imagePath": ""},
+        {"name": "noodles", "imagePath": ""},
+        {"name": "fruity", "imagePath": ""},
+        {"name": "asian", "imagePath": ""},
+        {"name": "european", "imagePath": ""},
+        {"name": "with greens", "imagePath": ""},
+        {"name": "fried", "imagePath": ""}
+    ],
+    "foods": [
+        {"name": "Chips", "tags": ["salty", "cheesy", "snack"]},
+        {"name": "Chocolate Cake", "tags": ["sweet"]},
+        {"name": "Ice cream", "tags": ["sweet", "snack", "cold", "dairy"]},
+        {"name": "Pizza", "tags": ["savory", "cheesy", "fast food"]},
+        {"name": "Veggie burger", "tags": ["savory", "cheesy", "fast food", "vegetarian"]},
+        {"name": "Hot dog", "tags": ["savory", "with meat", "fast food", "snack"]},
+        {"name": "Hot wings", "tags": ["savory", "fast food", "spicy", "with meat"]},
+        {"name": "Cookies", "tags": ["sweet", "snack"]},
+        {"name": "Ramen", "tags": ["asian", "noodles", "savory"]},
+        {"name": "Smoothie", "tags": ["sweet", "snack", "fruity", "dairy"]},
+        {"name": "Bolognese", "tags": ["savory", "noodles", "spicy", "with meat", "european"]},
+        {"name": "Greek salad", "tags": ["with greens", "savory", "european"]}
+    ]
+}

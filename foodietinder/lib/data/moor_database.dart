@@ -1,6 +1,8 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:rxdart/rxdart.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 
 part 'moor_database.g.dart';
 
@@ -12,6 +14,7 @@ class Foods extends Table {
 class Tags extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 20)();
+  TextColumn get imagePath => text()();
 }
 
 @DataClassName('FoodEntry')
@@ -129,6 +132,15 @@ class AppDatabase extends _$AppDatabase {
   Future<Tag> getTagByName(var name) =>
       (select(tags)..where((t) => t.name.equals(name))).getSingle();
 
+  Future<List<Tag>> getTags(var foodTags) async {
+    List<Tag> tags = [];
+    for (var tag in foodTags) {
+      tags.add(await getTagByName(tag));
+    }
+
+    return tags;
+  }
+
   Future<Food> getFoodByName(var name) =>
       (select(foods)..where((t) => t.name.equals(name))).getSingle();
 
@@ -137,136 +149,27 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<FoodEntry>> watchAllFoodEntries() => select(foodEntries).watch();
 
   Future<void> prepareDb() async {
-    insertTag(new Tag(name: "salty"));
-    insertTag(new Tag(name: "sweet"));
-    insertTag(new Tag(name: "savory"));
-    insertTag(new Tag(name: "cheesy"));
-    insertTag(new Tag(name: "snack"));
-    insertTag(new Tag(name: "spicy"));
-    insertTag(new Tag(name: "fast food"));
-    insertTag(new Tag(name: "vegetarian"));
-    insertTag(new Tag(name: "dairy"));
-    insertTag(new Tag(name: "cold"));
-    insertTag(new Tag(name: "with meat"));
-    insertTag(new Tag(name: "noodles"));
-    insertTag(new Tag(name: "fruity"));
-    insertTag(new Tag(name: "asian"));
-    insertTag(new Tag(name: "european"));
-    insertTag(new Tag(name: "with greens"));
-    insertTag(new Tag(name: "fried"));
+    Map<String, dynamic> database =
+        json.decode(await rootBundle.loadString('assets/database.json'));
 
-    insertFood(new Food(name: "Chips"));
-    insertFood(new Food(name: "Chocolate Cake"));
-    insertFood(new Food(name: "Ice cream"));
-    insertFood(new Food(name: "Pizza"));
-    insertFood(new Food(name: "Veggie burger"));
-    insertFood(new Food(name: "Hot dog"));
-    insertFood(new Food(name: "Hot wings"));
-    insertFood(new Food(name: "Cookies"));
-    insertFood(new Food(name: "Ramen"));
-    insertFood(new Food(name: "Smoothie"));
-    insertFood(new Food(name: "Bolognese"));
-    insertFood(new Food(name: "Greek salad"));
+    List<FoodWithTags> foodWithTagsList = [];
 
-    FoodWithTags chips =
-        await createFoodWithTags(await getFoodByName("Chips"), [
-      await getTagByName("salty"),
-      await getTagByName("cheesy"),
-      await getTagByName("snack"),
-    ]);
+    for (var tag in database['tags']) {
+      insertTag(new Tag(name: tag['name'], imagePath: tag['imagePath']));
+    }
 
-    FoodWithTags chocolate_cake =
-        await createFoodWithTags(await getFoodByName("Chocolate Cake"), [
-      await getTagByName("sweet"),
-    ]);
+    for (var food in database['foods']) {
+      insertFood(new Food(name: food['name']));
+    }
 
-    FoodWithTags ice_cream =
-        await createFoodWithTags(await getFoodByName("Ice cream"), [
-      await getTagByName("sweet"),
-      await getTagByName("snack"),
-      await getTagByName("cold"),
-      await getTagByName("dairy"),
-    ]);
+    for (var food in database['foods']) {
+      FoodWithTags foodWithTags = await createFoodWithTags(
+          await getFoodByName(food['name']), await getTags(food['tags']));
+      foodWithTagsList.add(foodWithTags);
+    }
 
-    FoodWithTags pizza =
-        await createFoodWithTags(await getFoodByName("Pizza"), [
-      await getTagByName("savory"),
-      await getTagByName("cheesy"),
-      await getTagByName("fast food"),
-    ]);
-
-    FoodWithTags veggie_burger =
-        await createFoodWithTags(await getFoodByName("Veggie burger"), [
-      await getTagByName("savory"),
-      await getTagByName("cheesy"),
-      await getTagByName("fast food"),
-      await getTagByName("vegetarian"),
-    ]);
-
-    FoodWithTags hot_dog =
-        await createFoodWithTags(await getFoodByName("Hot dog"), [
-      await getTagByName("savory"),
-      await getTagByName("with meat"),
-      await getTagByName("fast food"),
-      await getTagByName("snack"),
-    ]);
-
-    FoodWithTags hot_wings =
-        await createFoodWithTags(await getFoodByName("Hot wings"), [
-      await getTagByName("savory"),
-      await getTagByName("fast food"),
-      await getTagByName("spicy"),
-      await getTagByName("with meat"),
-    ]);
-
-    FoodWithTags cookies =
-        await createFoodWithTags(await getFoodByName("Cookies"), [
-      await getTagByName("sweet"),
-      await getTagByName("snack"),
-    ]);
-
-    FoodWithTags ramen =
-        await createFoodWithTags(await getFoodByName("Ramen"), [
-      await getTagByName("asian"),
-      await getTagByName("noodles"),
-      await getTagByName("savory"),
-    ]);
-
-    FoodWithTags smoothie =
-        await createFoodWithTags(await getFoodByName("Smoothie"), [
-      await getTagByName("sweet"),
-      await getTagByName("snack"),
-      await getTagByName("fruity"),
-      await getTagByName("dairy"),
-    ]);
-
-    FoodWithTags bolognese =
-        await createFoodWithTags(await getFoodByName("Bolognese"), [
-      await getTagByName("savory"),
-      await getTagByName("noodles"),
-      await getTagByName("spicy"),
-      await getTagByName("with meat"),
-      await getTagByName("european")
-    ]);
-
-    FoodWithTags greek_salad =
-        await createFoodWithTags(await getFoodByName("Greek salad"), [
-      await getTagByName("with greens"),
-      await getTagByName("savory"),
-      await getTagByName("european")
-    ]);
-
-    writeFood(chips);
-    writeFood(chocolate_cake);
-    writeFood(ice_cream);
-    writeFood(pizza);
-    writeFood(veggie_burger);
-    writeFood(hot_dog);
-    writeFood(hot_wings);
-    writeFood(cookies);
-    writeFood(ramen);
-    writeFood(smoothie);
-    writeFood(bolognese);
-    writeFood(greek_salad);
+    foodWithTagsList.forEach((element) {
+      writeFood(element);
+    });
   }
 }
