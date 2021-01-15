@@ -1,8 +1,8 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
+import 'package:foodietinder/widgets/start_button_widget.dart';
 import 'package:provider/provider.dart';
-
-import 'game_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,25 +22,47 @@ class _HomePageState extends State<HomePage> {
             stream: database.watchAllTags(),
             builder: (context, shot) {
               if (shot.hasData) {
-                return Center(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(), primary: Colors.green),
-                    child: Container(
-                      width: 250,
-                      height: 250,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: Text(
-                        'START',
-                        style: TextStyle(fontSize: 50),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 50),
+                    ),
+                    SizedBox(
+                      child: ColorizeAnimatedTextKit(
+                        text: ["FOOD MATCHER"],
+                        textStyle:
+                            TextStyle(fontSize: 42, fontFamily: 'Monoton'),
+                        textAlign: TextAlign.left,
+                        colors: [
+                          Color.fromARGB(255, 98, 156, 44),
+                          Color.fromARGB(255, 18, 81, 30),
+                          Color.fromARGB(255, 155, 184, 36),
+                        ],
+                        repeatForever: true,
+                        speed: Duration(milliseconds: 300),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(_createRoute(snap.data, shot.data));
-                    },
-                  ),
+                    // Text(
+                    //   "Food Matcher",
+                    //   style: TextStyle(
+                    //     color: Color.fromARGB(255, 18, 81, 30),
+                    //     fontSize: 50,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 170),
+                    ),
+                    Center(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          StartButtonWidget(foods: snap.data, tags: shot.data)
+                        ],
+                      ),
+                    ),
+                  ],
                 );
               } else {
                 return SizedBox(
@@ -61,23 +83,4 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-}
-
-Route _createRoute(List<FoodWithTags> foods, List<Tag> tags) {
-  return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) =>
-        GamePage(foodWithTags: foods, tags: tags),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(0.0, 1.0);
-      var end = Offset.zero;
-      var curve = Curves.ease;
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-      var offsetAnimation = animation.drive(tween);
-
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  );
 }

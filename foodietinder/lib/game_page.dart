@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:provider/provider.dart';
+import 'package:foodietinder/tag_card.dart';
 
 import 'data/moor_database.dart';
-import 'data/tag_card.dart';
 
 class GamePage extends StatefulWidget {
   List<FoodWithTags> foodWithTags;
@@ -20,15 +18,27 @@ class _GamePageState extends State<GamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
-      body: Center(
-        child: Column(
-          children: [
-            Expanded(
-              child:
-                  TagCard(foodWithTags: widget.foodWithTags, tags: widget.tags),
-            ),
-          ],
+      body: Container(
+        // backgroundColor: Color.fromARGB(255, 18, 81, 30),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(255, 155, 184, 36),
+                Color.fromARGB(255, 98, 156, 44),
+                Color.fromARGB(255, 18, 81, 30),
+              ]),
+        ),
+        child: Center(
+          child: Column(
+            children: [
+              Expanded(
+                child: TagCard(
+                    foodWithTags: widget.foodWithTags, tags: widget.tags),
+              ),
+            ],
+          ),
         ),
       ),
     );

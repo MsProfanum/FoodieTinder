@@ -10,7 +10,8 @@ part of 'moor_database.dart';
 class Food extends DataClass implements Insertable<Food> {
   final int id;
   final String name;
-  Food({@required this.id, @required this.name});
+  final String imagePath;
+  Food({@required this.id, @required this.name, @required this.imagePath});
   factory Food.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -19,6 +20,8 @@ class Food extends DataClass implements Insertable<Food> {
     return Food(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      imagePath: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}image_path']),
     );
   }
   @override
@@ -30,6 +33,9 @@ class Food extends DataClass implements Insertable<Food> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
+    if (!nullToAbsent || imagePath != null) {
+      map['image_path'] = Variable<String>(imagePath);
+    }
     return map;
   }
 
@@ -37,6 +43,9 @@ class Food extends DataClass implements Insertable<Food> {
     return FoodsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      imagePath: imagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imagePath),
     );
   }
 
@@ -46,6 +55,7 @@ class Food extends DataClass implements Insertable<Food> {
     return Food(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      imagePath: serializer.fromJson<String>(json['imagePath']),
     );
   }
   @override
@@ -54,55 +64,70 @@ class Food extends DataClass implements Insertable<Food> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
+      'imagePath': serializer.toJson<String>(imagePath),
     };
   }
 
-  Food copyWith({int id, String name}) => Food(
+  Food copyWith({int id, String name, String imagePath}) => Food(
         id: id ?? this.id,
         name: name ?? this.name,
+        imagePath: imagePath ?? this.imagePath,
       );
   @override
   String toString() {
     return (StringBuffer('Food(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('imagePath: $imagePath')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, name.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(name.hashCode, imagePath.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Food && other.id == this.id && other.name == this.name);
+      (other is Food &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.imagePath == this.imagePath);
 }
 
 class FoodsCompanion extends UpdateCompanion<Food> {
   final Value<int> id;
   final Value<String> name;
+  final Value<String> imagePath;
   const FoodsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.imagePath = const Value.absent(),
   });
   FoodsCompanion.insert({
     this.id = const Value.absent(),
     @required String name,
-  }) : name = Value(name);
+    @required String imagePath,
+  })  : name = Value(name),
+        imagePath = Value(imagePath);
   static Insertable<Food> custom({
     Expression<int> id,
     Expression<String> name,
+    Expression<String> imagePath,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (imagePath != null) 'image_path': imagePath,
     });
   }
 
-  FoodsCompanion copyWith({Value<int> id, Value<String> name}) {
+  FoodsCompanion copyWith(
+      {Value<int> id, Value<String> name, Value<String> imagePath}) {
     return FoodsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 
@@ -115,6 +140,9 @@ class FoodsCompanion extends UpdateCompanion<Food> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (imagePath.present) {
+      map['image_path'] = Variable<String>(imagePath.value);
+    }
     return map;
   }
 
@@ -122,7 +150,8 @@ class FoodsCompanion extends UpdateCompanion<Food> {
   String toString() {
     return (StringBuffer('FoodsCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name')
+          ..write('name: $name, ')
+          ..write('imagePath: $imagePath')
           ..write(')'))
         .toString();
   }
@@ -150,8 +179,20 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
         minTextLength: 1, maxTextLength: 50);
   }
 
+  final VerificationMeta _imagePathMeta = const VerificationMeta('imagePath');
+  GeneratedTextColumn _imagePath;
   @override
-  List<GeneratedColumn> get $columns => [id, name];
+  GeneratedTextColumn get imagePath => _imagePath ??= _constructImagePath();
+  GeneratedTextColumn _constructImagePath() {
+    return GeneratedTextColumn(
+      'image_path',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, name, imagePath];
   @override
   $FoodsTable get asDslTable => this;
   @override
@@ -171,6 +212,12 @@ class $FoodsTable extends Foods with TableInfo<$FoodsTable, Food> {
           _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('image_path')) {
+      context.handle(_imagePathMeta,
+          imagePath.isAcceptableOrUnknown(data['image_path'], _imagePathMeta));
+    } else if (isInserting) {
+      context.missing(_imagePathMeta);
     }
     return context;
   }

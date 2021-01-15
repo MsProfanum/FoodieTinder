@@ -1,11 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:foodietinder/data/card_widget.dart';
-import 'package:foodietinder/data/feedback_position_provider.dart';
 import 'package:foodietinder/data/moor_database.dart';
-import 'package:foodietinder/data/tag_item.dart';
-
+import 'package:foodietinder/feedback_position_provider.dart';
+import 'package:foodietinder/tag_item.dart';
+import 'package:foodietinder/widgets/card_widget.dart';
 import 'package:provider/provider.dart';
 
 final tagIndex = ValueNotifier<int>(0);
@@ -133,7 +132,8 @@ class _TagCardState extends State<TagCard> {
   List<TagItem> _createTagItemList() {
     List<TagItem> tagList = [];
     tagsCopy.forEach((tag) {
-      tagList.add(new TagItem(id: tag.id, name: tag.name));
+      tagList.add(
+          new TagItem(id: tag.id, name: tag.name, imagePath: tag.imagePath));
     });
 
     return tagList;
@@ -158,7 +158,8 @@ class _TagCardState extends State<TagCard> {
       element.tags.forEach((t) {
         if (!newTagsList.contains(t) && tags.contains(t)) {
           newTagsList.add(t);
-          newTagItemList.add(new TagItem(id: t.id, name: t.name));
+          newTagItemList
+              .add(new TagItem(id: t.id, name: t.name, imagePath: t.imagePath));
         }
       });
     });

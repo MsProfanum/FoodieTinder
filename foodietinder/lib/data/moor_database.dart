@@ -9,6 +9,7 @@ part 'moor_database.g.dart';
 class Foods extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 50)();
+  TextColumn get imagePath => text()();
 }
 
 class Tags extends Table {
@@ -159,7 +160,7 @@ class AppDatabase extends _$AppDatabase {
     }
 
     for (var food in database['foods']) {
-      insertFood(new Food(name: food['name']));
+      insertFood(new Food(name: food['name'], imagePath: food['imagePath']));
     }
 
     for (var food in database['foods']) {

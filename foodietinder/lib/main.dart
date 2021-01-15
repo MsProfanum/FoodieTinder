@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foodietinder/data/feedback_position_provider.dart';
 import 'package:foodietinder/data/moor_database.dart';
+import 'package:foodietinder/feedback_position_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'home_page.dart';
