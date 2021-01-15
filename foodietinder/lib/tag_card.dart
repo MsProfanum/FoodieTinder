@@ -5,6 +5,7 @@ import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/feedback_position_provider.dart';
 import 'package:foodietinder/tag_item.dart';
 import 'package:foodietinder/widgets/card_widget.dart';
+import 'package:foodietinder/widgets/result_widget.dart';
 import 'package:provider/provider.dart';
 
 final tagIndex = ValueNotifier<int>(0);
@@ -46,21 +47,9 @@ class _TagCardState extends State<TagCard> {
             valueListenable: tagIndex,
             builder: (context, value, w) {
               return (foodWithTagsCopy.length <= 1 || tagsCopy.length <= 1)
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          foodWithTagsCopy[0].food.name,
-                          style: TextStyle(fontSize: 60),
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                          icon: Icon(Icons.refresh),
-                          iconSize: 64,
-                          onPressed: () => _refresh(),
-                        )
-                      ],
+                  ? ResultWidget(
+                      foodWithTags: foodWithTagsCopy,
+                      refresh: refresh,
                     )
                   : card;
             }),
@@ -68,7 +57,8 @@ class _TagCardState extends State<TagCard> {
     );
   }
 
-  void _refresh() {
+  void refresh() {
+    print('dupa');
     setState(() {
       foodWithTagsCopy = List.of(widget.foodWithTags);
       tagsCopy = List.of(widget.tags);
