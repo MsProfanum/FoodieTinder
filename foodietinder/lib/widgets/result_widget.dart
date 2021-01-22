@@ -20,16 +20,16 @@ class ResultWidget extends StatelessWidget {
         ),
         Text(
           foodWithTags[0].food.name.toUpperCase(),
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 40, color: Colors.white, fontFamily: 'Monoton'),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text("PLAY AGAIN",
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600)),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             IconButton(
-              padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
               icon: Icon(Icons.refresh),
               iconSize: 30,
               onPressed: () => refresh(),
