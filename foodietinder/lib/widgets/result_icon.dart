@@ -35,13 +35,13 @@ class _ResultIconState extends State<ResultIcon>
     return AnimatedBuilder(
       animation: _controller,
       child: Transform.scale(
-        scale: 1.2,
+        scale: 1.0,
         child: Image(
           image: AssetImage(widget.icon),
         ),
       ),
       builder: (context, child) => Transform.scale(
-        scale: _controller.value * 1.5,
+        scale: _controller.value * 1.2,
         child: child,
       ),
     );

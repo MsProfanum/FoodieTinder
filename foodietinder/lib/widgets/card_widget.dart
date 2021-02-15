@@ -42,9 +42,7 @@ class CardWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CardIcon(
-                    icon: tag.imagePath != ""
-                        ? 'assets/${tag.imagePath}'
-                        : 'assets/icons8-salt-shaker.png',
+                    icon: 'assets/${tag.imagePath}',
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 80),

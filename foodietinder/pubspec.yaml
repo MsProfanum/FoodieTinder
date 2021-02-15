@@ -26,11 +26,13 @@ dependencies:
   moor: ^3.4.0
   moor_flutter: ^3.1.0
   rxdart: ^0.25.0
+  audioplayers: ^0.17.3
   # for UI
   provider: ^3.0.0+1
   flutter_slidable: ^0.5.3
   animated_text_kit: ^3.1.0
   simple_animations: ^2.4.2
+  url_launcher: ^5.7.10
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

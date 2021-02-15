@@ -5,8 +5,11 @@ import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/feedback_position_provider.dart';
 import 'package:foodietinder/tag_item.dart';
 import 'package:foodietinder/widgets/card_widget.dart';
+import 'package:foodietinder/widgets/no_clue_widget.dart';
 import 'package:foodietinder/widgets/result_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 final tagIndex = ValueNotifier<int>(0);
 var random = new Random();
@@ -34,8 +37,7 @@ class _TagCardState extends State<TagCard> {
     foodWithTagsCopy = List.of(widget.foodWithTags);
     tagsCopy = List.of(widget.tags);
     tagItems = _createTagItemList();
-    card = buildCard(
-        tagItems[(tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
+    card = buildCard(tagItems[random.nextInt(tagItems.length)]);
   }
 
   @override
@@ -46,33 +48,26 @@ class _TagCardState extends State<TagCard> {
         child: ValueListenableBuilder(
             valueListenable: tagIndex,
             builder: (context, value, w) {
-              return (foodWithTagsCopy.length <= 1 || tagsCopy.length <= 1)
-                  ? ResultWidget(
-                      foodWithTags: foodWithTagsCopy,
-                      refresh: refresh,
-                    )
-                  : card;
+              return card;
             }),
       ),
     );
   }
 
   void refresh() {
-    print('dupa');
     setState(() {
       foodWithTagsCopy = List.of(widget.foodWithTags);
       tagsCopy = List.of(widget.tags);
       tagItems = _createTagItemList();
-      card = buildCard(tagItems[
-          (tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
+      card = buildCard(tagItems[random.nextInt(tagItems.length)]);
     });
   }
 
-  Widget buildCard(TagItem tag) {
-    Tag t;
+  Widget buildCard(TagItem tagItem) {
+    Tag tag;
     tagsCopy.forEach((element) {
-      if (element.name == tag.name) {
-        t = element;
+      if (element.name == tagItem.name) {
+        tag = element;
       }
     });
     final isInFocus = true;
@@ -94,28 +89,29 @@ class _TagCardState extends State<TagCard> {
         provider.resetPosition();
       },
       child: Draggable<CardWidget>(
-        child: CardWidget(tag: tag, isInFocus: isInFocus),
+        child: CardWidget(tag: tagItem, isInFocus: isInFocus),
         childWhenDragging: Container(),
         feedback: Material(
             type: MaterialType.transparency,
-            child: CardWidget(tag: tag, isInFocus: isInFocus)),
-        onDragEnd: (details) => onDragEnd(details, tag, t),
+            child: CardWidget(tag: tagItem, isInFocus: isInFocus)),
+        onDragEnd: (details) => onDragEnd(details, tagItem, tag),
       ),
     );
   }
 
-  void onDragEnd(DraggableDetails details, TagItem tagItem, Tag t) {
+  void onDragEnd(DraggableDetails details, TagItem tagItem, Tag tag) {
     final minimumDrag = 100;
     if (details.offset.dx > minimumDrag) {
       tagItem.isLiked = true;
-      _removeFoodWithoutTag(t);
-      _updateTags(t, tagsCopy);
-
-      _updateTags(t, tagsCopy);
+      _removeFoodWithoutTag(tag);
+      _updateTags(tag, tagsCopy);
     } else if (details.offset.dx < -minimumDrag) {
       tagItem.isSwipedOff = true;
-      _removeFoodWithTag(t);
-      _updateTags(t, tagsCopy);
+      _removeFoodWithTag(tag);
+      _updateTags(tag, tagsCopy);
+    }
+    if (foodWithTagsCopy.length > 1 && tagsCopy.length > 1) {
+      playLocalAsset('card-swipe-sound.mp3');
     }
   }
 
@@ -141,6 +137,11 @@ class _TagCardState extends State<TagCard> {
     });
   }
 
+  Future<AudioPlayer> playLocalAsset(String sound) async {
+    AudioCache cache = new AudioCache();
+    return await cache.play(sound);
+  }
+
   void _updateTags(Tag tag, List<Tag> tags) {
     List<Tag> newTagsList = [];
     List<TagItem> newTagItemList = [];
@@ -155,6 +156,7 @@ class _TagCardState extends State<TagCard> {
     });
     newTagsList.remove(tag);
     newTagItemList.removeWhere((element) => element.id == tag.id);
+
     tags.clear();
     tags.addAll(newTagsList);
 
@@ -162,8 +164,18 @@ class _TagCardState extends State<TagCard> {
     tagItems.addAll(newTagItemList);
 
     setState(() {
-      card = buildCard(tagItems[
-          (tagItems.length > 1) ? random.nextInt(tagItems.length) : 0]);
+      card = (foodWithTagsCopy.length == 0 || tagsCopy.length == 0)
+          ? NoClueResultWidget(
+              iconString: 'assets/icons8-question-mark.png',
+              refresh: refresh,
+              playLocalAsset: playLocalAsset('result-sound.mp3'))
+          : (foodWithTagsCopy.length == 1 || tagsCopy.length == 1)
+              ? ResultWidget(
+                  foodWithTags: foodWithTagsCopy,
+                  refresh: refresh,
+                  playLocalAsset: playLocalAsset('result-sound.mp3'),
+                )
+              : buildCard(tagItems[random.nextInt(tagItems.length)]);
     });
   }
 }

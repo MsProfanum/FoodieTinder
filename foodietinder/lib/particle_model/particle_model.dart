@@ -10,15 +10,16 @@ class ParticleModel {
   double size;
   AnimationProgress animationProgress;
   Random random;
+  Paint paint;
 
-  ParticleModel(this.random) {
+  ParticleModel(this.random, this.paint) {
     restart();
   }
 
   restart({Duration time = Duration.zero}) {
     final startPosition = Offset(-0.2 + 1.4 * random.nextDouble(), 1.2);
     final endPosition = Offset(-0.2 + 1.4 * random.nextDouble(), -0.2);
-    final duration = Duration(milliseconds: 1500 + random.nextInt(1000));
+    final duration = Duration(milliseconds: 4000 + random.nextInt(1500));
 
     tween = MultiTrackTween([
       Track("x").add(

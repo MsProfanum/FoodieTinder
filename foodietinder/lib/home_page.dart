@@ -1,9 +1,11 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/widgets/particles.dart';
 import 'package:foodietinder/widgets/start_button_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
               if (shot.hasData) {
                 return Stack(
                   children: <Widget>[
-                    Positioned.fill(child: Particles(20)),
+                    Positioned.fill(child: Particles(30)),
                     Column(
                       children: [
                         Padding(
@@ -59,15 +61,48 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
+                        Spacer(),
+                        RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                                style: TextStyle(
+                                  color: Colors.black.withAlpha(150),
+                                ),
+                                text: "Icons provided by: "),
+                            TextSpan(
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 98, 156, 44),
+                                ),
+                                text: "Icons8",
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () async {
+                                    var url =
+                                        "https://icons8.com/icon/set/food/color";
+                                    if (await canLaunch(url)) {
+                                      await launch(url);
+                                    } else {
+                                      throw 'Could not launch $url';
+                                    }
+                                  })
+                          ]),
+                        )
                       ],
                     )
                   ],
                 );
               } else {
-                return SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 60,
-                  height: 60,
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        child: CircularProgressIndicator(),
+                        width: 60,
+                        height: 60,
+                      ),
+                    ],
+                  ),
                 );
               }
             },

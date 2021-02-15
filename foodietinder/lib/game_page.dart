@@ -19,7 +19,6 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        // backgroundColor: Color.fromARGB(255, 18, 81, 30),
         decoration: BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topLeft,

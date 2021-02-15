@@ -1,17 +1,14 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/widgets/result_icon.dart';
 
-class ResultWidget extends StatelessWidget {
-  final List<FoodWithTags> foodWithTags;
+class NoClueResultWidget extends StatelessWidget {
+  final String iconString;
   final VoidCallback refresh;
   Future<AudioPlayer> playLocalAsset;
 
-  ResultWidget(
-      {@required this.foodWithTags,
-      @required this.refresh,
-      this.playLocalAsset});
+  NoClueResultWidget(
+      {@required this.iconString, @required this.refresh, this.playLocalAsset});
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +20,12 @@ class ResultWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ResultIcon(icon: 'assets/${foodWithTags[0].food.imagePath}'),
+            ResultIcon(icon: iconString),
             Padding(
               padding: EdgeInsets.only(bottom: 50),
             ),
             Text(
-              foodWithTags[0].food.name.toUpperCase(),
+              "NO CLUE",
               style: TextStyle(
                   fontSize: 42, color: Colors.white, fontFamily: 'Monoton'),
             ),
