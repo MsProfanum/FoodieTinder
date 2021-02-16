@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
@@ -6,6 +8,7 @@ import 'package:foodietinder/widgets/result_icon.dart';
 class ResultWidget extends StatelessWidget {
   final List<FoodWithTags> foodWithTags;
   final VoidCallback refresh;
+  var _random = new Random();
   Future<AudioPlayer> playLocalAsset;
 
   ResultWidget(
@@ -16,6 +19,7 @@ class ResultWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     playLocalAsset;
+    final result = foodWithTags[_random.nextInt(foodWithTags.length)];
     return Column(
       children: [
         Spacer(),
@@ -23,12 +27,12 @@ class ResultWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ResultIcon(icon: 'assets/${foodWithTags[0].food.imagePath}'),
+            ResultIcon(icon: 'assets/${result.food.imagePath}'),
             Padding(
               padding: EdgeInsets.only(bottom: 50),
             ),
             Text(
-              foodWithTags[0].food.name.toUpperCase(),
+              result.food.name.toUpperCase(),
               style: TextStyle(
                   fontSize: 42, color: Colors.white, fontFamily: 'Monoton'),
             ),
