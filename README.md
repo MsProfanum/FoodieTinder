@@ -2,7 +2,7 @@
 
 Simple app that helps you choose what food do you crave by swiping away cards on the screen.
 
-![FoodMatcher](https://github.com/MsProfanum/FoodieTinder/tree/main/foodietinder/assets/foodMatcher.gif)
+![FoodMatcher](foodietinder/assets/foodMatcher.gif)
 
 ## Features
 
