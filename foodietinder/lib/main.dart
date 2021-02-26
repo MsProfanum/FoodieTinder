@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodietinder/data/moor_database.dart';
-import 'package:foodietinder/feedback_position_provider.dart';
+import 'package:foodietinder/helper_classes/feedback_position_provider.dart';
+import 'package:foodietinder/pages/home_page.dart';
 import 'package:provider/provider.dart';
-
-import 'home_page.dart';
 
 void main() {
   runApp(MyApp());

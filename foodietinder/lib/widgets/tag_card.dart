@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
-import 'package:foodietinder/feedback_position_provider.dart';
-import 'package:foodietinder/tag_item.dart';
+import 'package:foodietinder/data/tag_item.dart';
+import 'package:foodietinder/helper_classes/feedback_position_provider.dart';
 import 'package:foodietinder/widgets/card_widget.dart';
 import 'package:foodietinder/widgets/no_clue_widget.dart';
 import 'package:foodietinder/widgets/result_widget.dart';

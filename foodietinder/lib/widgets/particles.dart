@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:foodietinder/particle_model/particle_model.dart';
-import 'package:foodietinder/particle_model/particle_painter.dart';
+import 'package:foodietinder/helper_classes/particle_model.dart';
+import 'package:foodietinder/helper_classes/particle_painter.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 class Particles extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:foodietinder/particle_model/particle_model.dart';
+import 'package:foodietinder/helper_classes/particle_model.dart';
 
 class ParticlePainter extends CustomPainter {
   List<ParticleModel> particles;

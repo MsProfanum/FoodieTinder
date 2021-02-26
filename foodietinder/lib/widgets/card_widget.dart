@@ -1,8 +1,8 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:foodietinder/feedback_position_provider.dart';
-import 'package:foodietinder/tag_item.dart';
+import 'package:foodietinder/data/tag_item.dart';
+import 'package:foodietinder/helper_classes/feedback_position_provider.dart';
 import 'package:foodietinder/widgets/card_icon.dart';
 import 'package:provider/provider.dart';
 

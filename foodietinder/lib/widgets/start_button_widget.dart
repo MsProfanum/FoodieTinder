@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
-import 'package:foodietinder/game_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:foodietinder/pages/game_page.dart';
 
 class StartButtonWidget extends StatefulWidget {
   final List<FoodWithTags> foods;

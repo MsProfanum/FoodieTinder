@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foodietinder/tag_card.dart';
-
-import 'data/moor_database.dart';
+import 'package:foodietinder/data/moor_database.dart';
+import 'package:foodietinder/widgets/tag_card.dart';
 
 class GamePage extends StatefulWidget {
   List<FoodWithTags> foodWithTags;
