@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/game_page.dart';
-import 'package:foodietinder/widgets/particles.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StartButtonWidget extends StatefulWidget {
   final List<FoodWithTags> foods;
@@ -22,8 +22,8 @@ class _StartButtonWidgetState extends State<StartButtonWidget> {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(shape: CircleBorder()),
       child: Container(
-        width: 250,
-        height: 250,
+        width: 250.w,
+        height: 250.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -46,7 +46,7 @@ class _StartButtonWidgetState extends State<StartButtonWidget> {
         child: Text(
           'START',
           style: TextStyle(
-              fontSize: 50, color: Colors.white, fontFamily: 'Monoton'),
+              fontSize: 50.sp, color: Colors.white, fontFamily: 'Monoton'),
         ),
       ),
       onPressed: () {

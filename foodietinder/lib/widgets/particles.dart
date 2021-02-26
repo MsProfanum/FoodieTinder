@@ -1,15 +1,9 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:foodietinder/particle_model/particle_model.dart';
 import 'package:foodietinder/particle_model/particle_painter.dart';
-import 'package:moor/moor.dart';
 import 'package:simple_animations/simple_animations.dart';
-
-import 'dart:ui' as ui;
-import 'package:flutter/services.dart' show rootBundle;
-import 'dart:typed_data';
 
 class Particles extends StatefulWidget {
   final int numberOfParticles;

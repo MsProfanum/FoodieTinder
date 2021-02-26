@@ -1,6 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodietinder/feedback_position_provider.dart';
 import 'package:foodietinder/tag_item.dart';
 import 'package:foodietinder/widgets/card_icon.dart';
@@ -45,10 +45,10 @@ class CardWidget extends StatelessWidget {
                     icon: 'assets/${tag.imagePath}',
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 80),
+                    padding: EdgeInsets.only(bottom: 80.h),
                   ),
                   ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: 50),
+                    constraints: BoxConstraints(maxHeight: 50.h),
                     child: WavyAnimatedTextKit(
                       speed: Duration(milliseconds: 170),
                       textStyle: TextStyle(
@@ -78,7 +78,7 @@ class CardWidget extends StatelessWidget {
       return Container();
     } else {
       return Positioned(
-        top: 40,
+        top: 40.h,
         right: isSwipingRight ? null : 30,
         left: isSwipingRight ? 30 : null,
         child: Transform.rotate(
@@ -92,7 +92,7 @@ class CardWidget extends StatelessWidget {
               isSwipingRight ? 'LIKE' : 'NOPE',
               style: TextStyle(
                 color: color,
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),

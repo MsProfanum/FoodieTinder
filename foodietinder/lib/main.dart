@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/feedback_position_provider.dart';
 import 'package:provider/provider.dart';
@@ -15,11 +16,16 @@ class MyApp extends StatelessWidget {
         create: (context) => FeedbackPositionProvider(),
         child: Provider<AppDatabase>(
           create: (context) => AppDatabase(),
-          child: MaterialApp(
-            title: 'Foodie tinder',
-            home: Scaffold(
-              backgroundColor: Colors.white,
-              body: HomePage(),
+          child: ScreenUtilInit(
+            designSize: Size(411, 845),
+            allowFontScaling: true,
+            builder: () => MaterialApp(
+              title: 'Foodie tinder',
+              debugShowCheckedModeBanner: false,
+              home: Scaffold(
+                backgroundColor: Colors.white,
+                body: HomePage(),
+              ),
             ),
           ),
         ),

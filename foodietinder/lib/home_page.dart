@@ -6,6 +6,7 @@ import 'package:foodietinder/widgets/particles.dart';
 import 'package:foodietinder/widgets/start_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,8 +37,8 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           child: ColorizeAnimatedTextKit(
                             text: ["FOOD MATCHER"],
-                            textStyle:
-                                TextStyle(fontSize: 42, fontFamily: 'Monoton'),
+                            textStyle: TextStyle(
+                                fontSize: 42.sp, fontFamily: 'Monoton'),
                             textAlign: TextAlign.left,
                             colors: [
                               Color.fromARGB(255, 98, 156, 44),
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 170),
+                          padding: EdgeInsets.only(bottom: 170.h),
                         ),
                         Center(
                           child: Column(
@@ -98,8 +99,8 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       SizedBox(
                         child: CircularProgressIndicator(),
-                        width: 60,
-                        height: 60,
+                        width: 60.w,
+                        height: 60.h,
                       ),
                     ],
                   ),
@@ -108,10 +109,12 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } else {
-          return SizedBox(
-            child: CircularProgressIndicator(),
-            width: 60,
-            height: 60,
+          return Center(
+            child: SizedBox(
+              child: CircularProgressIndicator(),
+              width: 60.w,
+              height: 60.h,
+            ),
           );
         }
       },

@@ -1,6 +1,7 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:foodietinder/widgets/result_icon.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NoClueResultWidget extends StatelessWidget {
   final String iconString;
@@ -22,12 +23,12 @@ class NoClueResultWidget extends StatelessWidget {
           children: [
             ResultIcon(icon: iconString),
             Padding(
-              padding: EdgeInsets.only(bottom: 50),
+              padding: EdgeInsets.only(bottom: 50.h),
             ),
             Text(
               "NO CLUE",
               style: TextStyle(
-                  fontSize: 42, color: Colors.white, fontFamily: 'Monoton'),
+                  fontSize: 42.sp, color: Colors.white, fontFamily: 'Monoton'),
             ),
           ],
         ),
@@ -37,20 +38,20 @@ class NoClueResultWidget extends StatelessWidget {
           children: [
             Text("PLAY AGAIN",
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white.withAlpha(150),
                 )),
             IconButton(
               icon: Icon(Icons.refresh),
-              iconSize: 30,
+              iconSize: 30.sp,
               onPressed: () => refresh(),
               color: Colors.white.withAlpha(200),
             )
           ],
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 50),
+          padding: EdgeInsets.only(bottom: 50.h),
         )
       ],
     );

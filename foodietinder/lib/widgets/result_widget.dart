@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:foodietinder/data/moor_database.dart';
 import 'package:foodietinder/widgets/result_icon.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResultWidget extends StatelessWidget {
   final List<FoodWithTags> foodWithTags;
@@ -34,7 +35,7 @@ class ResultWidget extends StatelessWidget {
             Text(
               result.food.name.toUpperCase(),
               style: TextStyle(
-                  fontSize: 42, color: Colors.white, fontFamily: 'Monoton'),
+                  fontSize: 30.sp, color: Colors.white, fontFamily: 'Monoton'),
             ),
           ],
         ),
@@ -44,13 +45,13 @@ class ResultWidget extends StatelessWidget {
           children: [
             Text("PLAY AGAIN",
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.white.withAlpha(150),
                 )),
             IconButton(
               icon: Icon(Icons.refresh),
-              iconSize: 30,
+              iconSize: 30.sp,
               onPressed: () => refresh(),
               color: Colors.white.withAlpha(200),
             )
