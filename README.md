@@ -1,6 +1,7 @@
 # Food Matcher
 
 Simple app that helps you choose what food do you crave by swiping away cards on the screen.
+You can download the application in [Google Store](https://play.google.com/store/apps/details?id=com.flutter.foodietinder&hl=pl)!
 
 ![FoodMatcher](foodietinder/assets/foodMatcher.gif)
 
